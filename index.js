@@ -4,7 +4,7 @@ const fetch = require("node-fetch");
 
 const s3 = new AWS.S3({
     accessKeyId: '[]',
-    secretAccessKey: '[]'
+    secretAccessKey: '[]
 })
 
 const imagesUrl = 'https://loremflickr.com/320/240/eggs';
@@ -30,8 +30,7 @@ const uploadFile = () => {
             Bucket: 'bas-c',
             Key: 'bg.jpg',
             Body: imageFile,
-            ContentType: 'binary',
-            permission: 
+            ContentType: 'binary'
         }
         s3.upload(params, function(err,data) {
             if (data) {
