@@ -1,49 +1,44 @@
 const AWS = require('aws-sdk');
-const imagesUrl = 'https://loremflickr.com/320/240/food';
+const fs = require('fs');
+const fetch = require("node-fetch");
+
 const s3 = new AWS.S3({
-    accessKeyId: '[insert]',
-    secretAccessKey: '[insert]'
+    accessKeyId: '[]',
+    secretAccessKey: '[]'
 })
-const fileName = 'file.jpg';
 
+const imagesUrl = 'https://loremflickr.com/320/240/eggs';
 
-var FetchStream = require("fetch").FetchStream,
-    fs = require("fs"),
-    out;
-out = fs.createWriteStream('file.jpg');
-
-
-
+const downloadFile = (async (url) => {
+    const res = await fetch(url);
+    const fileStream = fs.createWriteStream('tempImage.jpg');
+    await new Promise((resolve, reject) => {
+        res.body.pipe(fileStream);
+        res.body.on("error", (err) => {
+            reject(err);
+        });
+        fileStream.on("finish", function () {
+            resolve();
+            console.log('Image downloaded from API and created');
+        });
+    });
+});
 
 const uploadFile = () => {
-    fs.readFile(fileName, (err, data) => {
-       if (err) throw err;
-       const params = {
-           Bucket: '[here]', // pass your bucket name
-           Key: 'bg.jpg', // file will be saved as testBucket/contacts.csv
-           Body: JSON.stringify(data, null, 2)
-       };
-       s3.upload(params, function(s3Err, data) {
-           if (s3Err) throw s3Err
-           console.log(`File uploaded successfully at ${data.Location}`)
-       });
-    });
-  };
-//   new FetchStream(imagesUrl).pipe(out);
-//   uploadFile();
+    fs.readFile('./tempImage.jpg', function(err, imageFile) {
+        let params = {
+            Bucket: 'bas-c',
+            Key: 'bg.jpg',
+            Body: imageFile,
+            ContentType: 'binary',
+            permission: 
+        }
+        s3.upload(params, function(err,data) {
+            if (data) {
+                console.log('Upload success')
+            }
+        })
+    })
+};
 
-var getImage = new Promise((resolve, reject) => {
-    new FetchStream(imagesUrl).pipe(out);
-    console.log('Image downloaded from API and created')
-})
-
-var uploadImage = new Promise((resolve, reject) => {
-    uploadFile();
-    console.log('Image uploaded to s3');
-})
-
-function all() {
-    Promise.all([getImage]).then(uploadImage);
-}
-
-all();
+downloadFile(imagesUrl).then(() => uploadFile());
