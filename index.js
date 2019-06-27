@@ -18,6 +18,7 @@ const s3 = new AWS.S3({
             Bucket: 'bas-c',
             Key: 'bg.jpg',
             Body: body,
+            ACL: 'public-read'
         }).promise();
     }
 
