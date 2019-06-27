@@ -7,22 +7,21 @@ const s3 = new AWS.S3({
     secretAccessKey: '[]'
 })
 
-const imagesUrl = 'https://loremflickr.com/320/240/eggs';
+    const options = {
+        uri: 'https://loremflickr.com/320/240/eggs',
+        encoding: null
+    };
 
-const options = {
-    uri: imagesUrl,
-    encoding: null
-};
+    async function load() {
+        const body = await request(options);
+        const uploadResult = await s3.upload({
+            Bucket: 'bas-c',
+            Key: 'bg.jpg',
+            Body: body,
+        }).promise();
+    }
 
-async function load() {
-
-    const body = await request(options)
-
-    const uploadResult = await s3.upload({
-        Bucket: 'bas-c',
-        Key: 'bg.jpg',
-        Body: body,
-    }).promise()
-
+exports.handler = async (event, context) => {
+    const uploadImage = await load();
+    return uploadImage
 }
-
