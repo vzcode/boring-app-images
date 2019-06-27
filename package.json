@@ -12,6 +12,8 @@
     "aws-sdk": "^2.478.0",
     "fetch": "^1.1.0",
     "fs": "0.0.1-security",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4"
   }
 }
